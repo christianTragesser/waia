@@ -1,0 +1,40 @@
+project_name: waia
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+    goos:
+      - linux
+    binary: '{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}'
+checksum:
+  name_template: 'checksums.txt'
+  extra_files:
+    - glob: ./dist/{{ .ProjectName }}_linux_amd64/*
+snapshot:
+  name_template: '{{ incpatch .Version }}-rc_{{ .ShortCommit }}'
+nfpms:
+  - formats:
+      - deb
+      - rpm
+    bindir: /usr/local/bin
+    homepage: https://github.com/christianTragesser/waia
+    maintainer: ACME Corporation
+    description: "Who Am I App"
+    license: MIT
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude:
+      - 'test'
+      - 'correct'
+      - '^WIP'
+      - 'README'
+      - 'github'
+release:
+  extra_files:
+    - glob: ./dist/{{ .ProjectName }}_linux_amd64/*
